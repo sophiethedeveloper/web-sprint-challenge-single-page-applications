@@ -1,6 +1,8 @@
 import React from "react";
 import { Button, Navbar, Card, CardImg } from "reactstrap";
 import { Route, Link } from "react-router-dom";
+import OrderForm from "./components/Form.js";
+
 
 const App = () => {
   return (
@@ -25,7 +27,7 @@ const App = () => {
         </Card>
       </Route>
       <Route path='/pizza'>
-        {/* <OrderForm /> */}
+        <OrderForm />
       </Route>
       <Route path="/final">
         {/* <Final /> */}
