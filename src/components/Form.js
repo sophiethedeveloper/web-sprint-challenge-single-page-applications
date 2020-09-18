@@ -70,7 +70,6 @@ const OrderForm = () => {
   }, [formData]);
 
   const inputChange = (e) => {
-    // e.persist();
     yup
       .reach(schema, e.target.name)
       //we can then run validate using the value
@@ -125,8 +124,10 @@ const OrderForm = () => {
 
   // handleChange function
   const hangleChange = (e) => {
+    e.persist();
+    inputChange(e)
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // inputChange()
+   
   };
 
   // handleToppings
