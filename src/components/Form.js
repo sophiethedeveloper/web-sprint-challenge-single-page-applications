@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
 import {
   Card,
@@ -16,12 +16,12 @@ import axios from "axios";
 import * as yup from "yup";
 
 const OrderForm = () => {
-
   //This state handles the drop down menu
   const [dropDownOpen, setDropDownOpen] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
-    size: "",
+    size: 0,
     sauce: "",
     protein: "",
     pineapple: false,
@@ -34,8 +34,8 @@ const OrderForm = () => {
 
   //validation
   const schema = yup.object().shape({
-    name: yup.string().required('Name is required').min(2),
-    size: yup.string().required(),
+    name: yup.string().required("Name is required").min(2),
+    size: yup.number().required().positive().integer().min(1),
     sauce: yup.string().required(),
     protein: yup.string().required(),
     pineapple: yup.boolean(),
@@ -44,19 +44,89 @@ const OrderForm = () => {
     tomatoes: yup.boolean(),
     cheese: yup.boolean(),
     special: yup.string(),
-});
+  });
 
-const submit = () => {
-    schema.validate(formData).then(() => {
-        axios.post('https://reqres.in/api/users', formData).then((res) => {
-            console.log('this is your posted data', res.data)
+  // State for the error messages
+  const [errors, setErrors] = useState({
+    name: "",
+    size: 0,
+    sauce: "",
+    protein: "",
+    pineapple: false,
+    onion: false,
+    pepper: false,
+    tomatoes: false,
+    cheese: false,
+    special: "",
+  });
+
+  useEffect(() => {
+    /* We pass the entire state into the entire schema, no need to use reach here. 
+    We want to make sure it is all valid before we allow a user to submit
+    isValid comes from Yup directly */
+    schema.isValid(formData).then((valid) => {
+      setButtonDisabled(!valid);
+    });
+  }, [formData]);
+
+  const inputChange = (e) => {
+    // e.persist();
+    yup
+      .reach(schema, e.target.name)
+      //we can then run validate using the value
+      .validate(e.target.value)
+      // if the validation is successful, we can clear the error message
+      .then((valid) => {
+        setErrors({
+          ...errors,
+          [e.target.name]: "",
+        });
+      })
+      /* if the validation is unsuccessful, we can set the error message to the message 
+        returned from yup (that we created in our schema) */
+      .catch((err) => {
+        setErrors({
+          ...errors,
+          [e.target.name]: err.errors[0],
+        });
+      });
+
+    // Wether or not our validation was successful, we will still set the state to the new value as the user is typing
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const submit = () => {
+    // schema.validate(formData).then(() => {
+      axios
+        .post("https://reqres.in/api/users", formData)
+        .then((res) => {
+          console.log("this is your posted data", res.data);
+
+          //reset information on form
+          setFormData({
+            name: "",
+            size: 0,
+            sauce: "",
+            protein: "",
+            pineapple: false,
+            onion: false,
+            pepper: false,
+            tomatoes: false,
+            cheese: false,
+            special: "",
+          });
         })
-    })
- }
+        .catch((err) => console.log(err.response));
+    // });
+  };
 
- // handleChange function
- const hangleChange = (e) => {
+  // handleChange function
+  const hangleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // inputChange()
   };
 
   // handleToppings
@@ -66,9 +136,9 @@ const submit = () => {
 
   const toggle = () => setDropDownOpen((prevState) => !prevState);
 
-    return (
-        <>
-        <Card color="info" style={{ margin: "40px auto" }}>
+  return (
+    <>
+      <Card color="info" style={{ margin: "40px auto" }}>
         <h2 style={{ color: "white", margin: "20px auto" }}>
           Create your own Pizza!
         </h2>
@@ -77,13 +147,15 @@ const submit = () => {
           src={require("../img/pizza-2.jpg")}
         />
       </Card>
-      <Form 
-      onSubmit={(e) => {
-        e.preventDefault();
-        submit()
-      }} 
-      
-      data-cy="submit"  style={{ margin: "20px auto", width: "50%" }}>
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+        // onChange={inputChange}
+        data-cy="submit"
+        style={{ margin: "20px auto", width: "50%" }}
+      >
         <FormGroup>
           <legend>Name</legend>
           <Input
@@ -93,6 +165,8 @@ const submit = () => {
             onChange={hangleChange}
             data-cy="name"
           />
+        <div>{errors.name}</div>
+
         </FormGroup>
 
         {/* To Select the pizza size */}
@@ -103,37 +177,44 @@ const submit = () => {
               {formData.size === 0 ? "Select Your Pizza Size" : formData.size}
             </DropdownToggle>
             <DropdownMenu>
-              <div 
-                 onClick={() => {
-                    toggle();
-                    setFormData({ ...formData, size: 0 });
-                  }}
+              <div
+                onClick={() => {
+                  toggle();
+                  setFormData({ ...formData, size: 0 });
+                }}
               >
                 --Select Your Size--
               </div>
-              <div  onClick={() => {
+              <div
+                onClick={() => {
                   toggle();
-                  setFormData({ ...formData, size: "small" });
-                }}>
+                  setFormData({ ...formData, size: 1 });
+                }}
+              >
                 Small
               </div>
-              <div onClick={() => {
+              <div
+                onClick={() => {
                   toggle();
-                  setFormData({ ...formData, size: "medium"});
-                }}>
+                  setFormData({ ...formData, size: 2 });
+                }}
+              >
                 Medium
               </div>
-              <div onClick={() => {
+              <div
+                onClick={() => {
                   toggle();
-                  setFormData({ ...formData, size: "large" });
-                }}>
+                  setFormData({ ...formData, size: 3 });
+                }}
+              >
                 Large
               </div>
               <div
-              onClick={() => {
-                toggle();
-                setFormData({ ...formData, size: "extra-large" });
-              }}>
+                onClick={() => {
+                  toggle();
+                  setFormData({ ...formData, size: 4 });
+                }}
+              >
                 Extra Large
               </div>
             </DropdownMenu>
@@ -341,11 +422,10 @@ const submit = () => {
         
         </Link> */}
         {/* isabled={buttonDisabled} */}
-        <Button  >Submit</Button>
+        <Button disabled={buttonDisabled}>Submit</Button>
       </Form>
     </>
-    )
-}
-
+  );
+};
 
 export default OrderForm;
