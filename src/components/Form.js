@@ -32,6 +32,9 @@ const OrderForm = () => {
     special: "",
   });
 
+  //stretch challenge
+//   const [order, setOrder] = useState([])
+
   //validation
   const schema = yup.object().shape({
     name: yup.string().required("Name is required").min(2),
@@ -96,6 +99,23 @@ const OrderForm = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  //Stretch challenge
+//   const getOrder = () => {
+//     axios.get("https://reqres.in/api/users")
+//     .then(res => {
+//       console.log('res', res)
+//       setOrder(res.data.data)
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+//   }
+
+//    //////////////// SIDE EFFECTS ////////////////
+//    useEffect(() => {
+//     getOrder()
+//   }, [])
 
   const submit = () => {
     // schema.validate(formData).then(() => {
@@ -166,7 +186,7 @@ const OrderForm = () => {
             onChange={hangleChange}
             data-cy="name"
           />
-        <div>{errors.name}</div>
+        <div className="error">{errors.name}</div>
 
         </FormGroup>
 
@@ -233,6 +253,7 @@ const OrderForm = () => {
                 name="sauce"
                 value="red"
                 onChange={hangleChange}
+                data-cy="red"
               />
               Original Red
             </Label>
@@ -244,6 +265,7 @@ const OrderForm = () => {
                 name="sauce"
                 value="garlic-ranch"
                 onChange={hangleChange}
+                data-cy="garlic"
               />
               Garlic Ranch
             </Label>
@@ -255,6 +277,7 @@ const OrderForm = () => {
                 name="sauce"
                 value="bbq"
                 onChange={hangleChange}
+                data-cy="bbq"
               />
               BBQ Sauce
             </Label>
@@ -266,6 +289,7 @@ const OrderForm = () => {
                 name="sauce"
                 value="spinach-alfredo"
                 onChange={hangleChange}
+                data-cy="spinach"
               />
               Spinach Alfredo
             </Label>
@@ -417,14 +441,24 @@ const OrderForm = () => {
             name="special"
             value={formData.specials}
             onChange={hangleChange}
+            data-cy="special"
           />
         </FormGroup>
-        {/* <Link to="/final">
-        
-        </Link> */}
-        {/* isabled={buttonDisabled} */}
         <Button disabled={buttonDisabled}>Submit</Button>
+        {/* <Link to="/final">
+       
+        </Link> */}
       </Form>
+
+      {/* Strecth Challenge */}
+
+      {/* {
+          order.map((or, idex) => {
+              return(
+
+              )
+          })
+      } */}
     </>
   );
 };
