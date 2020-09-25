@@ -1,10 +1,37 @@
 import React from "react";
+import { Button, Navbar, Card, CardImg } from "reactstrap";
+import { Route, Link } from "react-router-dom";
+import OrderForm from "./components/Form.js";
+// import Final from "./components/Final.js"
 
 const App = () => {
   return (
     <>
-      <h1>Lambda Eats</h1>
-      <p>You can remove this code and create your own header</p>
+      <Navbar color="success">
+        <h1 style={{ color: "white" }}>Lambda Eats</h1>
+        <Link to="/">
+          <Button color="info">Home</Button>
+        </Link>
+      </Navbar>
+      <Route exact path="/">
+        <Card style={{height: "80%", margin: "0 auto"}}>
+          <CardImg src={require("./img/pizza.jpg")} />
+          <Link to={"/pizza"}>
+            <Button
+              color="info"
+              style={{ position: "absolute", left: "50%", top: "50%" }}
+            >
+              Pizza?
+            </Button>
+          </Link>
+        </Card>
+      </Route>
+      <Route path='/pizza'>
+        <OrderForm />
+      </Route>
+      <Route path="/final">
+        {/* <Final /> */}
+      </Route>
     </>
   );
 };
